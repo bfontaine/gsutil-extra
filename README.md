@@ -135,3 +135,7 @@ completes custom paths:
 ```
 
 It doesn’t complete partial paths nor commands or arguments.
+
+## License
+
+Copyright © 2017-2018 Oscaro
