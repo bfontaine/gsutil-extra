@@ -1,0 +1,160 @@
+#! /usr/bin/env ruby
+# -*- coding: UTF-8 -*-
+
+# gsutil drop-in replacement with some additional features
+#
+
+require "set"
+require "yaml"
+require "shellwords"
+
+GSUTIL_PATH = File.expand_path("/usr/bin/gsutil").freeze
+PARALLELISABLE_COMMANDS = Set.new(%w[cp rm mv]).freeze
+
+
+class GsUtil
+  def initialize(args)
+    @raw_args = args
+
+    replace_urls!
+  end
+
+  def opt?(arg)
+    arg.size > 1 && arg[0] == "+"
+  end
+
+  def opts
+    @opts ||= Set.new @raw_args.take_while { |arg| opt? arg }
+  end
+
+  def args
+    @args ||= @raw_args.drop_while { |arg| opt? arg }
+  end
+
+  def verbose?
+    @is_verbose ||= opts.include? "+v"
+  end
+
+  def find_custom_command
+    cmd = args.first
+    if cmd
+      path = `which gsutil-#{cmd} 2>/dev/null`
+      path unless path.empty?
+    end
+  end
+
+  def auto_complete
+    args = Shellwords.split @args.last.gsub(" : ", ":")
+
+    # print the last arg after replacing URLs
+    puts Shellwords.join(args.slice(-1, args.length))
+  end
+
+  def run!
+    return print_aliases if args == %w[aliases]
+    return auto_complete if opts.include? "+autocomplete"
+
+    cmd = find_custom_command
+    if cmd.nil?
+      setup_default_args
+      exec GSUTIL_PATH, *args
+    else
+      args.shift
+      exec cmd, *args
+    end
+  end
+
+  private
+
+  def replace_urls!
+    args.map! do |arg|
+      new_arg = replace_url arg
+      puts "#{arg} --> #{new_arg}" if verbose? and new_arg != arg
+      new_arg
+    end
+  end
+
+  def replace_url(arg)
+    arg = replace_url_path arg
+    arg = replace_url_shortcuts arg
+
+    arg
+  end
+
+  def replace_url_path(arg)
+    case arg
+    # https -> gs
+    when %r{https://console\.cloud\.google\.com/storage/browser/(.+?)(?:\?project=[a-z0-9-]+)?$}
+      "gs://#{$1}"
+    when %r{https://storage\.cloud\.google\.com/(.+?)(?:\?project=[a-z0-9-]+)?$}
+      "gs://#{$1}"
+
+    # aliases
+    when %r{@([a-z]+)(?:/(.+))?}
+      real = aliases[$1]
+      real ? "gs://#{real}/#{$2}" : arg
+
+    else
+      arg
+    end
+  end
+
+  def replace_url_shortcuts(arg)
+    case arg
+    when %r{(gs://.+/):latest(/.*)?}
+      prefix = $1
+      trailing = $2
+      latest = gsutil_ls(prefix).sort.last
+      if latest.nil?
+        arg
+      elsif trailing
+        "#{latest.chomp("/")}#{trailing}"
+      else
+        latest
+      end
+    else
+      arg
+    end
+  end
+
+  def setup_default_args
+    # Add -m on e.g. "gsutil cp ... ..." if settings.always_parallelize is set.
+    if PARALLELISABLE_COMMANDS.include? args.first and settings["always_parallelize"]
+      args.unshift "-m"
+    end
+  end
+
+  def gsutil_ls(*args)
+    `#{GSUTIL_PATH} ls #{Shellwords.join(args)}`.lines.map(&:chomp)
+  end
+
+  def print_aliases
+    key_size = aliases.keys.map(&:size).max + 1
+    fmt = "%#{key_size}s = gs://%s"
+
+    aliases.each_pair do |k, v|
+      puts format(fmt, "@#{k}", v)
+    end
+  end
+
+  def aliases
+    config["aliases"] || {}
+  end
+
+  def settings
+    config["settings"] || {}
+  end
+
+  def config
+    @config ||= load_config
+  end
+
+  def load_config
+    YAML::load_file(File.expand_path("~/.gsutil-extra.yml"))
+  rescue
+    {}
+  end
+end
+
+g = GsUtil.new ARGV
+g.run!
