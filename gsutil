@@ -8,7 +8,7 @@ require "set"
 require "yaml"
 require "shellwords"
 
-GSUTIL_PATH = File.expand_path("/usr/bin/gsutil").freeze
+GSUTIL_PATH = "/usr/bin/gsutil".freeze
 PARALLELISABLE_COMMANDS = Set.new(%w[cp rm mv]).freeze
 
 
