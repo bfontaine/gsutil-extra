@@ -1,9 +1,12 @@
 # Gsutil-extra
 
-This repo contains a command-line wrapper around `gsutil`. It augments Google’s
-tool with extra capabilities while retaining full compatibility.
+This repo contains a command-line wrapper around [`gsutil`][gsutil]. It
+augments Google’s tool with extra capabilities while retaining full
+compatibility.
 
 It works by rewriting the commands you type then pass them to `gsutil`.
+
+[gsutil]: https://cloud.google.com/storage/docs/gsutil
 
 ## Install
 
@@ -20,7 +23,7 @@ The new `gsutil` works exactly like Google’s one.
 
 The config for those extra features is stored in `~/.gsutil-extra.yml`.
 
-#### `https` URLs
+#### HTTPS URLs
 
 `https://` URLs are automatically transformed into their `gs://` counterpart.
 
@@ -37,7 +40,7 @@ gs://my-bucket/foo/bar-3.csv
 ...
 ```
 
-See [gs2http][] to transform `gs://` URLs back to HTTP.
+See [gs2http][] to transform `gs://` URLs back to HTTPS in your browser.
 
 [gs2http]: https://oscaro.github.io/gs2http/
 
