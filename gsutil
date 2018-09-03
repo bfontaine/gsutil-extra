@@ -8,17 +8,25 @@ require "set"
 require "yaml"
 require "shellwords"
 
+SELF = File.expand_path("gsutil", __dir__)
+
 def find_original_gsutil
   from_env = ENV["GSUTIL_EXTRA_GSUTIL_PATH"]
   return from_env if File.executable?(from_env.to_s)
 
-  # TODO don't hardcode me
-  "/usr/bin/gsutil"
+  ENV["PATH"].to_s.split(File::PATH_SEPARATOR)
+    .map do |p|
+      File.realpath(File.expand_path("gsutil", p))
+    rescue
+    end
+    .select { |p| p && p != SELF && File.file?(p) && File.executable?(p) }
+    .first
 end
 
 GSUTIL_PATH = find_original_gsutil.freeze
 PARALLELISABLE_COMMANDS = Set.new(%w[cp rm mv]).freeze
 
+raise "Can't find your gsutil installation" if GSUTIL_PATH.nil?
 
 class GsUtil
   def initialize(args)
