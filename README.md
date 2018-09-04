@@ -15,6 +15,8 @@ directory.
 
 `which -a gsutil` should show _this_ `gsutil` first, then Google’s.
 
+You need to have Ruby installed.
+
 ## Usage
 
 The new `gsutil` works exactly like Google’s one.
