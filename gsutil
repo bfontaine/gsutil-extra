@@ -9,24 +9,7 @@ require "yaml"
 require "shellwords"
 
 SELF = File.expand_path("gsutil", __dir__)
-
-def find_original_gsutil
-  from_env = ENV["GSUTIL_EXTRA_GSUTIL_PATH"]
-  return from_env if File.executable?(from_env.to_s)
-
-  ENV["PATH"].to_s.split(File::PATH_SEPARATOR)
-    .map do |p|
-      File.realpath(File.expand_path("gsutil", p))
-    rescue
-    end
-    .select { |p| p && p != SELF && File.file?(p) && File.executable?(p) }
-    .first
-end
-
-gsutil_path = find_original_gsutil.freeze
 PARALLELISABLE_COMMANDS = %w[cp rm mv]
-
-raise "Can't find your gsutil installation" if gsutil_path.nil?
 
 class GsUtil
   def initialize(args)
@@ -169,6 +152,30 @@ class GsUtil
     YAML::load_file(File.expand_path("~/.gsutil-extra.yml"))
   rescue
     {}
+  end
+
+  private
+
+  def find_original_gsutil
+    from_env = ENV["GSUTIL_EXTRA_GSUTIL_PATH"]
+    return from_env if File.executable?(from_env.to_s)
+
+    gsutil_path = ENV["PATH"].to_s.split(File::PATH_SEPARATOR)
+      .map do |p|
+        begin
+          File.realpath(File.expand_path("gsutil", p))
+        rescue
+        end
+      end
+      .select { |p| p && p != SELF && File.file?(p) && File.executable?(p) }
+      .first
+
+    raise "Can't find your gsutil installation" if gsutil_path.nil?
+    gsutil_path
+  end
+
+  def gsutil_path
+    @gsutil_path ||= find_original_gsutil
   end
 end
 
