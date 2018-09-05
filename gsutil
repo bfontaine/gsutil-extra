@@ -23,10 +23,10 @@ def find_original_gsutil
     .first
 end
 
-GSUTIL_PATH = find_original_gsutil.freeze
-PARALLELISABLE_COMMANDS = Set.new(%w[cp rm mv]).freeze
+gsutil_path = find_original_gsutil.freeze
+PARALLELISABLE_COMMANDS = %w[cp rm mv]
 
-raise "Can't find your gsutil installation" if GSUTIL_PATH.nil?
+raise "Can't find your gsutil installation" if gsutil_path.nil?
 
 class GsUtil
   def initialize(args)
@@ -73,7 +73,7 @@ class GsUtil
     cmd = find_custom_command
     if cmd.nil?
       setup_default_args
-      exec GSUTIL_PATH, *args
+      exec gsutil_path, *args
     else
       args.shift
       exec cmd, *args
@@ -141,7 +141,7 @@ class GsUtil
   end
 
   def gsutil_ls(*args)
-    `#{GSUTIL_PATH} ls #{Shellwords.join(args)}`.lines.map(&:chomp)
+    `#{gsutil_path} ls #{Shellwords.join(args)}`.lines.map(&:chomp)
   end
 
   def print_aliases
