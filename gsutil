@@ -3,6 +3,7 @@
 
 # gsutil drop-in replacement with some additional features
 #
+# Version: 0.1.1
 
 require "set"
 require "yaml"

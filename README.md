@@ -11,9 +11,10 @@ It works by rewriting the commands you type then pass them to `gsutil`.
 ## Install
 
 Drop `gsutil` somewhere in your `PATH`, _before_ Google Cloud’s `bin`
-directory.
+directory. `which -a gsutil` should show _this_ `gsutil` first, then Google’s.
 
-`which -a gsutil` should show _this_ `gsutil` first, then Google’s.
+The script should find Google’s `gsutil` by itself, but if it doesn’t you can
+tell it by setting the environment variable `GSUTIL_EXTRA_GSUTIL_PATH`.
 
 You need to have Ruby installed.
 
