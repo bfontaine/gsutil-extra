@@ -119,8 +119,10 @@ class GsUtil
 
   def setup_default_args
     # Add -m on e.g. "gsutil cp ... ..." if settings.always_parallelize is set.
-    if PARALLELISABLE_COMMANDS.include? args.first and settings["always_parallelize"]
-      args.unshift "-m"
+    cmd = args.first
+    if PARALLELISABLE_COMMANDS.include? cmd && settings["always_parallelize"]
+      # don't add -m if we're copying from a stream
+      args.unshift "-m" unless cmd == "cp" && args[1] == "-"
     end
   end
 
