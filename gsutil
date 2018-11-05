@@ -1,5 +1,4 @@
 #! /usr/bin/env ruby
-# -*- coding: UTF-8 -*-
 
 # gsutil drop-in replacement with some additional features
 #
@@ -104,7 +103,7 @@ class GsUtil
     when %r{(gs://.+/):latest(/.*)?}
       prefix = $1
       trailing = $2
-      latest = gsutil_ls(prefix).sort.last
+      latest = gsutil_ls(prefix).max
       if latest.nil?
         arg
       elsif trailing
@@ -120,7 +119,7 @@ class GsUtil
   def setup_default_args
     # Add -m on e.g. "gsutil cp ... ..." if settings.always_parallelize is set.
     cmd = args.first
-    if PARALLELISABLE_COMMANDS.include? cmd && settings["always_parallelize"]
+    if PARALLELISABLE_COMMANDS.include?(cmd) && settings["always_parallelize"]
       # don't add -m if we're copying from a stream
       args.unshift "-m" unless cmd == "cp" && args[1] == "-"
     end
