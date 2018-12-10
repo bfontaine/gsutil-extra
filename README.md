@@ -99,6 +99,13 @@ gs://my-bucket/banana/foo/2018/
 % gsutil ls gs://my-bucket/banana/foo/2018/
 ```
 
+Aliases can include it as well:
+
+```yaml
+aliases:
+  lastbanana: my-bucket/banana/foo/:latest/
+```
+
 Note it’s slower than using the real value because we need to run a `gsutil ls`
 first to get all possible values.
 
