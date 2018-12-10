@@ -4,7 +4,7 @@ This repo contains a command-line wrapper around [`gsutil`][gsutil]. It
 augments Google’s tool with extra capabilities while retaining full
 compatibility.
 
-It works by rewriting the commands you type then pass them to `gsutil`.
+It works by rewriting the commands you type before passing them to `gsutil`.
 
 [gsutil]: https://cloud.google.com/storage/docs/gsutil
 
