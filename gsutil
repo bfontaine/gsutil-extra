@@ -91,7 +91,7 @@ class GsUtil
     # aliases
     when %r{@([a-z]+)(?:/(.+))?}
       real = aliases[$1]
-      real ? "gs://#{real}/#{$2}" : arg
+      real ? "#{gs_prefix real}/#{$2}" : arg
 
     else
       arg
@@ -131,10 +131,10 @@ class GsUtil
 
   def print_aliases
     key_size = aliases.keys.map(&:size).max + 1
-    fmt = "%#{key_size}s = gs://%s"
+    fmt = "%#{key_size}s = %s"
 
     aliases.each_pair do |k, v|
-      puts format(fmt, "@#{k}", v)
+      puts format(fmt, "@#{k}", gs_prefix(v))
     end
   end
 
@@ -144,6 +144,14 @@ class GsUtil
 
   def settings
     config["settings"] || {}
+  end
+
+  def gs_prefix(path)
+    if path.start_with? "gs://"
+      path
+    else
+      "gs://#{path}"
+    end
   end
 
   def config
