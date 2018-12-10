@@ -9,7 +9,7 @@ require "yaml"
 require "shellwords"
 
 SELF = File.expand_path("gsutil", __dir__)
-PARALLELISABLE_COMMANDS = %w[cp rm mv]
+PARALLELISABLE_COMMANDS = %w[cp rm mv].freeze
 
 class GsUtil
   def initialize(args)
@@ -23,7 +23,7 @@ class GsUtil
   end
 
   def opts
-    @opts ||= Set.new @raw_args.take_while { |arg| opt? arg }
+    @opts ||= Set.new(@raw_args.take_while { |arg| opt? arg })
   end
 
   def args
@@ -31,7 +31,7 @@ class GsUtil
   end
 
   def verbose?
-    @is_verbose ||= opts.include? "+v"
+    @verbose ||= opts.include? "+v"
   end
 
   def find_custom_command
@@ -68,7 +68,7 @@ class GsUtil
   def replace_urls!
     args.map! do |arg|
       new_arg = replace_url arg
-      puts "#{arg} --> #{new_arg}" if verbose? and new_arg != arg
+      puts "#{arg} --> #{new_arg}" if verbose? && new_arg != arg
       new_arg
     end
   end
@@ -151,26 +151,23 @@ class GsUtil
   end
 
   def load_config
-    YAML::load_file(File.expand_path("~/.gsutil-extra.yml"))
+    YAML.load_file(File.expand_path("~/.gsutil-extra.yml"))
   rescue
     {}
   end
-
-  private
 
   def find_original_gsutil
     from_env = ENV["GSUTIL_EXTRA_GSUTIL_PATH"]
     return from_env if File.executable?(from_env.to_s)
 
-    gsutil_path = ENV["PATH"].to_s.split(File::PATH_SEPARATOR)
-      .map do |p|
-        begin
-          File.realpath(File.expand_path("gsutil", p))
-        rescue
-        end
-      end
-      .select { |p| p && p != SELF && File.file?(p) && File.executable?(p) }
-      .first
+    gsutil_path = ENV["PATH"].to_s
+                             .split(File::PATH_SEPARATOR)
+                             .map do |p|
+                               File.realpath(File.expand_path("gsutil", p))
+                             rescue
+                             end
+                             .select { |p| p && p != SELF && File.file?(p) && File.executable?(p) }
+                             .first
 
     raise "Can't find your gsutil installation" if gsutil_path.nil?
     gsutil_path
