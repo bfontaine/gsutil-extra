@@ -171,8 +171,10 @@ class GsUtil
     gsutil_path = ENV["PATH"].to_s
                              .split(File::PATH_SEPARATOR)
                              .map do |p|
-                               File.realpath(File.expand_path("gsutil", p))
-                             rescue
+                               begin
+                                 File.realpath(File.expand_path("gsutil", p))
+                               rescue
+                               end
                              end
                              .select { |p| p && p != SELF && File.file?(p) && File.executable?(p) }
                              .first
