@@ -71,11 +71,12 @@ class GsUtil
       puts "#{arg} --> #{new_arg}" if verbose? && new_arg != arg
       new_arg
     end
+    args.compact!
   end
 
   def replace_url(arg)
     arg = replace_url_path arg
-    arg = replace_url_shortcuts arg
+    arg = replace_url_shortcuts(arg) unless arg.nil?
 
     arg
   end
@@ -87,6 +88,8 @@ class GsUtil
       "gs://#{$1}"
     when %r{https://storage\.cloud\.google\.com/(.+?)(?:\?project=[a-z0-9-]+)?$}
       "gs://#{$1}"
+    when %r{https://console\.cloud\.google\.com/storage/browser(?:\?project=[a-z0-9-]+)?$}
+      nil
 
     # aliases
     when %r{@([a-z]+)(?:/(.+))?}
