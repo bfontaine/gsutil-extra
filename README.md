@@ -144,8 +144,8 @@ completes custom paths:
 % gsutil ls gs://my-bucket/banana/foo/2018/
 ```
 
-It doesn’t complete partial paths nor commands or arguments.
+It doesn’t complete partial paths nor commands nor arguments.
 
 ## License
 
-Copyright © 2017-2018 Oscaro
+Copyright © 2017-2020 Oscaro
