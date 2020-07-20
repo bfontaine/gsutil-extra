@@ -1,6 +1,6 @@
 # gsutil-extra Changelog
 
-## 0.1.2
+## 0.1.2 (2020/07/20)
 
 * Improve the way we find the original `gsutil`
 * Fix code for older Rubies
