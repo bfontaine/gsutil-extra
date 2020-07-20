@@ -4,6 +4,7 @@
 #
 # Version: 0.1.1
 
+require "uri"
 require "set"
 require "yaml"
 require "shellwords"
@@ -84,10 +85,10 @@ class GsUtil
   def replace_url_path(arg)
     case arg
     # https -> gs
-    when %r{https://console\.cloud\.google\.com/storage/browser/(.+?)(?:\?project=[a-z0-9-]+)?$}
-      "gs://#{$1}"
+    when %r{https://console\.cloud\.google\.com/storage/browser(?:/_details)?/(.+?)(?:\?project=[a-z0-9-]+)?$}
+      "gs://#{URI.decode_www_form_component $1}"
     when %r{https://storage\.cloud\.google\.com/(.+?)(?:\?project=[a-z0-9-]+)?$}
-      "gs://#{$1}"
+      "gs://#{URI.decode_www_form_component $1}"
     when %r{https://console\.cloud\.google\.com/storage/browser(?:\?project=[a-z0-9-]+)?$}
       nil
 
