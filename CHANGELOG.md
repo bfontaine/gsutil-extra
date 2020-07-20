@@ -1,10 +1,12 @@
 # gsutil-extra Changelog
 
-## Unreleased
+## 0.1.2
 
 * Improve the way we find the original `gsutil`
 * Fix code for older Rubies
 * Make `gsutil ls` work on `https://console.cloud.google.com/storage/browser`
+* Fix HTTPS->GS for `_details` URLs
+* Fix URL-encoded paths
 
 ## 0.1.1 (2018/09/06)
 

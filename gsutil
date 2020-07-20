@@ -2,7 +2,7 @@
 
 # gsutil drop-in replacement with some additional features
 #
-# Version: 0.1.1
+# Version: 0.1.2
 
 require "uri"
 require "set"
