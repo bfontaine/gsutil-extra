@@ -1,6 +1,6 @@
 # gsutil-extra Changelog
 
-## Unreleased
+## 0.1.3 (2021/12/21)
 
 * Add support for URLs like `https://console.cloud.google.com/storage/browser/mybucket;tab=objects?...`
 
