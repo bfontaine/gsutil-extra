@@ -1,10 +1,14 @@
 # gsutil-extra Changelog
 
+## Unreleased
+
+* Add support for URLs like `https://console.cloud.google.com/storage/browser/mybucket;tab=objects?...`
+
 ## 0.1.2 (2020/07/20)
 
 * Improve the way we find the original `gsutil`
 * Fix code for older Rubies
-* Make `gsutil ls` work on `https://console.cloud.google.com/storage/browser`
+* Add support for URL `https://console.cloud.google.com/storage/browser`
 * Fix HTTPS->GS for `_details` URLs
 * Fix URL-encoded paths
 
