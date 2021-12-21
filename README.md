@@ -30,7 +30,7 @@ The config for those extra features is stored in `~/.gsutil-extra.yml`.
 
 `https://` URLs are automatically transformed into their `gs://` counterpart.
 
-```shell
+```bash
 # normal gsutil
 % gsutil ls https://console.cloud.google.com/storage/browser/my-bucket/foo
 InvalidUrlError: Unrecognized scheme "https".
@@ -62,7 +62,7 @@ aliases:
 If you then use a path that starts with `@b` anywhere in any `gsutil`
 command, it’ll replace it with `gs://my-bucket`.
 
-```shell
+```bash
 # what you type
 gsutil ls @b/banana
 
@@ -87,7 +87,7 @@ If you use `:latest` in a path component, it’s automatically replaced by the
 last one of the possible values, lexicographically sorted.
 
 For example:
-```shell
+```bash
 % gsutil ls gs://my-bucket/banana/foo
 gs://my-bucket/banana/foo/2016/
 gs://my-bucket/banana/foo/2017/
@@ -123,7 +123,7 @@ settings:
   always_parallelize: true
 ```
 
-```shell
+```bash
 # what you type
 gsutil cp mydir gs://foo/
 
@@ -145,7 +145,3 @@ completes custom paths:
 ```
 
 It doesn’t complete partial paths nor commands nor arguments.
-
-## License
-
-Copyright © 2017-2020 Oscaro
